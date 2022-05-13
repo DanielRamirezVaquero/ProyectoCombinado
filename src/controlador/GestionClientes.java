@@ -1,10 +1,19 @@
+package controlador;
 
 import java.util.Scanner;
 
+import modelo.DBManager;
+
 /**
- *
- * @author Daniel Ram铆rez Vaquero
+ * GestionClientes
+ * 
+ * 1.0.2
+ * 
+ * 14/05/2022
+ * 
+ * @author Daniel Ramirez Vaquero
  */
+
 public class GestionClientes {
 
     public static void main(String[] args) {
@@ -32,7 +41,7 @@ public class GestionClientes {
         
         Scanner in = new Scanner(System.in);
             
-        int opcion = pideInt("Elige una opci贸n: ");
+        int opcion = pideInt("Elige una opci髇: ");
         
         switch (opcion) {
             case 1:
@@ -50,7 +59,7 @@ public class GestionClientes {
             case 5:
                 return true;
             default:
-                System.out.println("Opci贸n elegida incorrecta");
+                System.out.println("Opci髇 elegida incorrecta");
                 return false;
         }
         
@@ -66,7 +75,7 @@ public class GestionClientes {
                 //in.nextLine();
                 return valor;
             } catch (Exception e) {
-                System.out.println("No has introducido un n煤mero entero. Vuelve a intentarlo.");
+                System.out.println("No has introducido un n鷐ero entero. Vuelve a intentarlo.");
             }
         }
     }
@@ -95,9 +104,9 @@ public class GestionClientes {
 
         System.out.println("Introduce los datos del nuevo cliente:");
         String nombre = pideLinea("Nombre: ");
-        String direccion = pideLinea("Direcci贸n: ");
+        String ciudad = pideLinea("Direcci髇: ");
 
-        boolean res = DBManager.insertCliente(nombre, direccion);
+        boolean res = DBManager.insertCliente(nombre, ciudad);
 
         if (res) {
             System.out.println("Cliente registrado correctamente");
@@ -122,10 +131,10 @@ public class GestionClientes {
 
         // Solicitamos los nuevos datos
         String nombre = pideLinea("Nuevo nombre: ");
-        String direccion = pideLinea("Nueva direcci贸n: ");
+        String ciudad = pideLinea("Nueva ciudad: ");
 
         // Registramos los cambios
-        boolean res = DBManager.updateCliente(id, nombre, direccion);
+        boolean res = DBManager.updateCliente(id, nombre, ciudad);
 
         if (res) {
             System.out.println("Cliente modificado correctamente");

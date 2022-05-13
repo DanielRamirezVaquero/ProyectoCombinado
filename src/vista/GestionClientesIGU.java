@@ -1,8 +1,20 @@
+package vista;
+/**
+ * GestionClientesIGU 
+ * 
+ * 1.0.2
+ * 
+ * 14/05/2022
+ * 
+ * @author Daniel Ramirez Vaquero
+ */
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+
+import modelo.DBManager;
 
 public class GestionClientesIGU extends javax.swing.JFrame {
 
@@ -11,7 +23,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
 
     public GestionClientesIGU() {
 
-        // InicilizaciÃ³n de componentes grÃ¡ficos
+        // Inicilización de componentes gráficos
         initComponents();
 
         // Cargamos driver y conectamos con la BD
@@ -80,7 +92,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         lblVNCNombre.setText("Nombre:");
 
         lblVNCDireccion.setFont(new java.awt.Font("Noto Sans", 1, 12)); // NOI18N
-        lblVNCDireccion.setText("Direccion:");
+        lblVNCDireccion.setText("Ciudad:");
 
         btnVNCAceptar.setText("Aceptar");
         btnVNCAceptar.addActionListener(new java.awt.event.ActionListener() {
@@ -302,7 +314,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         lblNombreCliente.setText("     ");
 
         lblDireccion.setFont(new java.awt.Font("Noto Sans", 1, 12)); // NOI18N
-        lblDireccion.setText("DirecciÃ³n:");
+        lblDireccion.setText("Dirección:");
 
         lblDireccionCliente.setText("     ");
 
@@ -519,12 +531,12 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         String nombre = "";
         String direccion = "";
 
-        // Obtenemos los datos del cliente actual (si es vÃ¡lido)
+        // Obtenemos los datos del cliente actual (si es válido)
         if (clienteValido) {
             try {
                 id = rsClientes.getInt("id");
                 nombre = rsClientes.getString("nombre");
-                direccion = rsClientes.getString("direccion");
+                direccion = rsClientes.getString("ciudad");
 
             } catch (SQLException ex) {
                 muestraVentanaError(ex);
@@ -540,7 +552,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
 
         if (!clienteValido) {
-            muestraVentanaAviso("No se puede editar el cliente.\nÂ¿Es posible que no haya clientes?");
+            muestraVentanaAviso("No se puede editar el cliente.\n¿Es posible que no haya clientes?");
         } else {
 
             try {
@@ -549,8 +561,8 @@ public class GestionClientesIGU extends javax.swing.JFrame {
                 lblVECIdCliente.setText("" + id);
                 String nombre = rsClientes.getString("nombre");
                 txtVECNombre.setText(nombre);
-                String direccion = rsClientes.getString("direccion");
-                txtVECDireccion.setText(direccion);
+                String ciudad = rsClientes.getString("ciudad");
+                txtVECDireccion.setText(ciudad);
 
                 // Ocultamos ventana principal
                 this.setVisible(false);
@@ -567,12 +579,12 @@ public class GestionClientesIGU extends javax.swing.JFrame {
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 
         if (!clienteValido) {
-            muestraVentanaAviso("No se puede eliminar el cliente.\nÂ¿Es posible que no haya clientes?");
+            muestraVentanaAviso("No se puede eliminar el cliente.\n¿Es posible que no haya clientes?");
         } else {
             // Ventana para que el usuario confirme
-            boolean aceptado = muestraVentanaAceptarCancelar("Â¿EstÃ¡ seguro de que desea eliminar el cliente?");
+            boolean aceptado = muestraVentanaAceptarCancelar("¿Está seguro de que desea eliminar el cliente?");
 
-            // Si respondiÃ³ que sÃ­, eliminamos el cliente y actualizamos datos
+            // Si respondió que sí, eliminamos el cliente y actualizamos datos
             if (aceptado) {
                 try {
                     // Eliminamos el cliente actual
@@ -594,7 +606,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         // Ocultamos ventana principal
         this.setVisible(false);
 
-        // Mostramos ventana de nuevo cliente con campos vacÃ­os
+        // Mostramos ventana de nuevo cliente con campos vacíos
         txtVNCNombre.setText("");
         txtVNCDireccion.setText("");
         jfNuevoCliente.setVisible(true);
@@ -610,7 +622,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         jfNuevoCliente.setVisible(false);
         this.setVisible(true);
 
-        // Actualizamos datos y mostramos el Ãºltimo
+        // Actualizamos datos y mostramos el último
         obtenerClientes();
         muestraClienteUltimo();
     }//GEN-LAST:event_btnVNCAceptarActionPerformed
@@ -631,7 +643,7 @@ public class GestionClientesIGU extends javax.swing.JFrame {
         jfEditarCliente.setVisible(false);
         this.setVisible(true);
 
-        // Actualizamos datos y mostramos el Ãºltimo
+        // Actualizamos datos y mostramos el Último
         obtenerClientes();
         muestraClientePrimero();
     }//GEN-LAST:event_btnVECAceptarActionPerformed
