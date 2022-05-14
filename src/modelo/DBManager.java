@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 /**
- * DBManager
+ * DBManager.
  * 
  * 1.0.2
  * 

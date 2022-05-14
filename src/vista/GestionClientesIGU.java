@@ -1,6 +1,6 @@
 package vista;
 /**
- * GestionClientesIGU 
+ * GestionClientesIGU.
  * 
  * 1.0.2
  * 
