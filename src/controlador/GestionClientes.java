@@ -5,7 +5,7 @@ import java.util.Scanner;
 import modelo.DBManager;
 
 /**
- * GestionClientes.
+ * GestionClientes
  * 
  * 1.0.2
  * 

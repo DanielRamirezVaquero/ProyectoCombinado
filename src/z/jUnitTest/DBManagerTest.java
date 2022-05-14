@@ -18,7 +18,7 @@ public class DBManagerTest {
 		
 		boolean resultado = DBManager.loadDriver();
 		boolean esperado = true;
-		assertEquals(resultado, esperado); //True, se ha cargado correctamente el driver
+		assertEquals(resultado, esperado); //True, se ha cargado correctamente el driver.
 	}
 
 	@Test
