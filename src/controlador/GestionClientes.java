@@ -1,20 +1,20 @@
 package controlador;
 
+import java.sql.SQLException;
 import java.util.Scanner;
-
 import modelo.DBManager;
 
 /**
  * GestionClientes
  * 
- * 1.0.2
- * 
- * 14/05/2022
+ * @Version 1.0.4 14/05/2022
  * 
  * @author Daniel Ramirez Vaquero
  */
 
 public class GestionClientes {
+	
+	private static final String ERROR_MSG = "Error :(";
 
     public static void main(String[] args) {
 
@@ -65,6 +65,12 @@ public class GestionClientes {
         
     }
     
+    /**
+     * 
+     * @param mensaje mensaje a mostrar por pantalla
+     * @return valor int ingresado por teclado
+     * @exception Exception 
+     */
     public static int pideInt(String mensaje){
         
         while(true) {
@@ -72,7 +78,6 @@ public class GestionClientes {
                 System.out.print(mensaje);
                 Scanner in = new Scanner(System.in);
                 int valor = in.nextInt();
-                //in.nextLine();
                 return valor;
             } catch (Exception e) {
                 System.out.println("No has introducido un número entero. Vuelve a intentarlo.");
@@ -80,6 +85,12 @@ public class GestionClientes {
         }
     }
     
+    /**
+     * 
+     * @param mensaje mensaje a motrar por pantalla
+     * @return linea String ingresado por teclado
+     * @exception Exception
+     */
     public static String pideLinea(String mensaje){
         
         while(true) {
@@ -111,7 +122,7 @@ public class GestionClientes {
         if (res) {
             System.out.println("Cliente registrado correctamente");
         } else {
-            System.out.println("Error :(");
+            System.out.println(ERROR_MSG);
         }
     }
 
@@ -139,7 +150,7 @@ public class GestionClientes {
         if (res) {
             System.out.println("Cliente modificado correctamente");
         } else {
-            System.out.println("Error :(");
+            System.out.println(ERROR_MSG);
         }
     }
 
@@ -160,7 +171,7 @@ public class GestionClientes {
         if (res) {
             System.out.println("Cliente eliminado correctamente");
         } else {
-            System.out.println("Error :(");
+            System.out.println(ERROR_MSG);
         }
     }
 }
