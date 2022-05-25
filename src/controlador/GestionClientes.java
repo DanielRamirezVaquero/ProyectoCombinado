@@ -10,7 +10,7 @@ import modelo.DBManager;
 /**
  * GestionClientes
  * 
- * @Version 1.0.4 14/05/2022
+ * @Version 1.1.0 25/05/2022
  * 
  * @author Daniel Ramirez Vaquero
  */
@@ -20,13 +20,6 @@ public class GestionClientes {
 	private static final String ERROR_MSG = "Error :(";
 
 	public static void main(String[] args) {
-
-		String host;
-		String port;
-		String dbName;
-		String dbURL;
-		String user;
-		String pass;
 
 		DBManager.loadDriver();
 		DBManager.connect();
@@ -47,7 +40,11 @@ public class GestionClientes {
 		System.out.println("2. Nuevo cliente");
 		System.out.println("3. Modificar cliente");
 		System.out.println("4. Eliminar cliente");
-		System.out.println("5. Salir");
+		System.out.println("5. Crear tabla nueva");
+		System.out.println("6. Filtrar por ciudad");
+		System.out.println("7. Volcar a un archivo");
+		System.out.println("8. Introducir datos desde archivo");
+		System.out.println("0. Salir");
 
 		Scanner in = new Scanner(System.in);
 
@@ -67,6 +64,18 @@ public class GestionClientes {
 			opcionEliminarCliente();
 			return false;
 		case 5:
+			opcionCrearNuevaTabla();
+			return false;
+		case 6:
+			opcionFiltraCiudad();
+			return false;
+		case 7:
+			opcionVolcarDatos();
+			return false;
+		case 8:
+			opcionCargarDesdeArchivo();
+			return false;
+		case 0:
 			return true;
 		default:
 			System.out.println("Opción elegida incorrecta");
@@ -114,6 +123,48 @@ public class GestionClientes {
 			}
 		}
 	}
+	
+	public static void opcionCargarDesdeArchivo () {
+		boolean res = DBManager.insertarDesdeFichero();
+		if (res) {
+			System.out.println("Datos cargados con exito.");
+		} else {
+			System.out.println("Error al cargar los datos");
+		}
+	}
+	
+	public static void opcionVolcarDatos() {
+		
+		String nombreArchivo = pideLinea("Indica el nombre del archivo donde volcar la BBDD (Tenga en cuenta que si indica un archivo ya existente este se sobreescribira): ");
+		Boolean res = DBManager.volcarTabla(nombreArchivo);
+		
+		if (res) {
+			System.out.println("Datos volcados con éxito en el archivo " + nombreArchivo);
+		} else {
+			System.out.println("Error al volcar los datos de la tabla");
+		}
+	}
+	
+	public static void opcionFiltraCiudad() {
+		String ciudad = pideLinea("Ciudad a filtrar: ");
+		DBManager.printTablaFiltrada(ciudad);
+	}
+	
+	public static void opcionCrearNuevaTabla() {
+		
+		String nombreTabla = pideLinea("Indica el nombre de la nueva tabla: ");
+		String nombreC1 = pideLinea("Indica el campo de la columna 1: ");
+		String nombreC2 = pideLinea("Indica el campo de la columna 2: ");
+		
+		Boolean res = DBManager.nuevaTabla(nombreTabla, nombreC1, nombreC2);
+		
+		if (res) {
+			System.out.println("Tabla " + nombreTabla + " creada con éxito.");
+		} else {
+			System.out.println("La tabla ya existe en la BBDD o ha ocurrido un error inesperado.");
+		}
+		
+	}
 
 	public static void opcionMostrarTabla() {
 		System.out.println("Listado de Clientes:");
@@ -125,7 +176,7 @@ public class GestionClientes {
 
 		System.out.println("Introduce los datos:");
 		String nombre = pideLinea("Nombre: ");
-		String ciudad = pideLinea("Dirección: ");
+		String ciudad = pideLinea("Ciudad: ");
 
 		boolean res = DBManager.insertCliente(nombre, ciudad);
 
