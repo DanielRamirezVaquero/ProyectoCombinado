@@ -1,10 +1,7 @@
 package modelo;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.*;
+import com.mysql.cj.jdbc.DatabaseMetaData;
+
 
 /**
  * DBManager
@@ -19,7 +16,7 @@ public class DBManager {
     // Conexión a la base de datos
     private static Connection conn = null;
 
-    // Configuración de la conexión a la base de datos
+    //Configuración de la conexión a la base de datos
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "tienda";
@@ -30,7 +27,7 @@ public class DBManager {
     private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXIÓN";
 
 
-    // Configuración de la tabla Clientes
+    // Configuración de la tabla
     private static final String DB_CLI = "clientes";
     private static final String DB_CLI_SELECT = "SELECT * FROM " + DB_CLI;
     private static final String DB_CLI_ID = "id";
@@ -45,6 +42,7 @@ public class DBManager {
     
     /**
      * Intenta cargar el JDBC driver.
+     * 
      * @return true si pudo cargar el driver, false en caso contrario
      * @exception ClassNotFoundException
      */
@@ -67,7 +65,7 @@ public class DBManager {
      * @exception SQLException
      */
     public static boolean connect() {
-        try {
+       try {
             System.out.print("Conectando a la base de datos...");
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
             System.out.println("OK!");
@@ -113,7 +111,22 @@ public class DBManager {
             ex.printStackTrace();
         }
     }
-
+    
+    /**
+     * 
+     * Método en el que establecemos los parametros de la tabla.
+     */
+    public static void parametrosTabla () {
+    	
+    	try {
+			java.sql.DatabaseMetaData metaDatos = conn.getMetaData();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	final String DB_TAB_NAME;
+    }
+    
     //////////////////////////////////////////////////
     // MÉTODOS DE TABLA CLIENTES
     //////////////////////////////////////////////////
