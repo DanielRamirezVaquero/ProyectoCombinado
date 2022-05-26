@@ -10,7 +10,7 @@ import modelo.DBManager;
 /**
  * GestionClientes
  * 
- * @Version 1.1.0 25/05/2022
+ * @Version 1.1.1 26/05/2022
  * 
  * @author Daniel Ramirez Vaquero
  */
@@ -36,14 +36,16 @@ public class GestionClientes {
 	public static boolean menuPrincipal() {
 		System.out.println("");
 		System.out.println("MENU PRINCIPAL");
-		System.out.println("1. Listar clientes");
-		System.out.println("2. Nuevo cliente");
-		System.out.println("3. Modificar cliente");
-		System.out.println("4. Eliminar cliente");
-		System.out.println("5. Crear tabla nueva");
-		System.out.println("6. Filtrar por ciudad");
-		System.out.println("7. Volcar a un archivo");
-		System.out.println("8. Introducir datos desde archivo");
+		System.out.println("1.  Listar clientes");
+		System.out.println("2.  Nuevo cliente");
+		System.out.println("3.  Modificar cliente");
+		System.out.println("4.  Eliminar cliente");
+		System.out.println("5.  Crear tabla nueva");
+		System.out.println("6.  Filtrar por ciudad");
+		System.out.println("7.  Volcar a un archivo");
+		System.out.println("8.  Introducir datos desde archivo");
+		System.out.println("9.  Actualizar datos desde fichero");
+		System.out.println("10. Eliminar datos desde fichero");
 		System.out.println("0. Salir");
 
 		Scanner in = new Scanner(System.in);
@@ -74,6 +76,12 @@ public class GestionClientes {
 			return false;
 		case 8:
 			opcionCargarDesdeArchivo();
+			return false;
+		case 9:
+			opcionModificarDesdeFichero();
+			return false;
+		case 10: 
+			opcionEliminarDesdeFichero();
 			return false;
 		case 0:
 			return true;
@@ -130,6 +138,24 @@ public class GestionClientes {
 			System.out.println("Datos cargados con exito.");
 		} else {
 			System.out.println("Error al cargar los datos");
+		}
+	}
+	
+	public static void opcionModificarDesdeFichero() {
+		boolean res = DBManager.actualizarDesdeFichero();
+		if (res) {
+			System.out.println("Datos actualizados con exito");
+		} else {
+			System.out.println("Error al actualizar los datos");
+		}
+	}
+	
+	public static void opcionEliminarDesdeFichero() {
+		boolean res = DBManager.eliminarDesdeFichero();
+		if (res) {
+			System.out.println("Datos eliminados con exito");
+		} else {
+			System.out.println("Error al eliminar los datos");
 		}
 	}
 	

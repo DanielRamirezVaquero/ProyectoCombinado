@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 /**
  * DBManager
  * 
- * @Version 1.1.0 25/05/2022
+ * @Version 1.1.1 26/05/2022
  * 
  * @author Daniel Ramirez Vaquero
  */
@@ -37,6 +37,13 @@ public class DBManager {
 	private static final String DB_CLI_ID = "id";
 	private static final String DB_CLI_NOM = "nombre";
 	private static final String DB_CLI_CIU = "ciudad";
+	
+	//Ficheros
+	private static final String RUTA_VOL = "Ficheros/Volcado de datos/";
+	private static final String RUTA_INS = "Ficheros/Instrucciones/";
+	private static final String FI_IN = "Insertar.txt";
+	private static final String FI_MOD = "Actualizar.txt";
+	private static final String FI_DEL = "Eliminar.txt";
 
 	//////////////////////////////////////////////////
 	// MÉTODOS DE CONEXIÓN A LA BASE DE DATOS
@@ -152,7 +159,6 @@ public class DBManager {
 		}
 	}
 
-
 	public static ResultSet getTablaFiltrada(String ciudad, int resultSetType, int resultSetConcurrency) {
 		try {
 			String sql = DB_CLI_SELECT + " WHERE " + DB_CLI_CIU + " ='" + ciudad + "';";
@@ -163,6 +169,7 @@ public class DBManager {
 			return null;
 		}
 	}
+
 	/**
 	 * Imprime por pantalla el contenido de la tabla clientes
 	 * 
@@ -171,9 +178,9 @@ public class DBManager {
 	public static void printTablaClientes() {
 		try {
 			ResultSet rs = getTablaClientes(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			
+
 			if (rs.first()) {
-				
+
 				do {
 					int id = rs.getInt(DB_CLI_ID);
 					String n = rs.getString(DB_CLI_NOM);
@@ -182,7 +189,7 @@ public class DBManager {
 				} while (rs.next());
 			} else {
 				return;
-			}			
+			}
 
 			rs.close();
 		} catch (SQLException | NullPointerException ex) {
@@ -193,12 +200,12 @@ public class DBManager {
 	public static void printTablaFiltrada(String ciudad) {
 		try {
 			ResultSet rs = getTablaFiltrada(ciudad, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			
-			if(!rs.first()) {
+
+			if (!rs.first()) {
 				System.out.println("No hay ningún cliente de " + ciudad + " registrado en la BBDD.");
-				
+
 			} else {
-				
+
 				do {
 					int id = rs.getInt(DB_CLI_ID);
 					String n = rs.getString(DB_CLI_NOM);
@@ -206,24 +213,24 @@ public class DBManager {
 					System.out.println(id + "\t" + n + "\t" + c);
 				} while (rs.next());
 			}
-			
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public static boolean volcarTabla(String nombreArchivo) {
 		try {
-			File archivoVolcado = new File ("Ficheros/Volcado de datos/" + nombreArchivo + ".txt");
+			File archivoVolcado = new File(RUTA_VOL + nombreArchivo + ".txt");
 			FileWriter printer = new FileWriter(archivoVolcado);
-			
+
 			printer.write("BBDD - " + DB_NAME + "\t" + "TABLA - " + DB_CLI + "\n");
 			printer.write(DB_CLI_ID + "\t" + DB_CLI_NOM + "\t" + DB_CLI_CIU + "\n");
-			
+
 			ResultSet rs = getTablaClientes(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			
+
 			if (rs.first()) {
-				
+
 				do {
 					int id = rs.getInt(DB_CLI_ID);
 					String n = rs.getString(DB_CLI_NOM);
@@ -231,10 +238,10 @@ public class DBManager {
 					printer.write(id + "\t" + n + "\t" + c + "\n");
 				} while (rs.next());
 			}
-		
-			rs.close();	
+
+			rs.close();
 			printer.close();
-						
+
 			return true;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -244,7 +251,7 @@ public class DBManager {
 			return false;
 		}
 	}
-	
+
 	//////////////////////////////////////////////////
 	// MÉTODOS DE UN SOLO CLIENTE
 	//////////////////////////////////////////////////
@@ -260,7 +267,8 @@ public class DBManager {
 		try {
 			// Realizamos la consulta SQL
 			String sql = DB_CLI_SELECT + " WHERE " + DB_CLI_ID + "='" + id + "';";
-			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stmt.executeQuery();
 
 			// Si no hay primer registro entonces no existe el cliente
@@ -444,58 +452,119 @@ public class DBManager {
 			return false;
 		}
 	}
-	
+
 	//////////////////////////////////////////////////
 	// OTROS METODOS
 	//////////////////////////////////////////////////
-	
+
 	public static boolean nuevaTabla(String nombreTabla, String columna1, String columna2) {
 		System.out.println("Generando tabla " + nombreTabla + "...");
 		try {
-			String sql = "CREATE TABLE " + nombreTabla + " (id INT PRIMARY KEY NOT NULL, " + columna1 + " TEXT NOT NULL, " + columna2 + " TEXT NOT NULL)";
-			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			String sql = "CREATE TABLE " + nombreTabla + " (id INT PRIMARY KEY NOT NULL, " + columna1
+					+ " TEXT NOT NULL, " + columna2 + " TEXT NOT NULL)";
+			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			stmt.executeUpdate();
 			stmt.close();
-			System.out.println("OK!");			
+			System.out.println("OK!");
 			return true;
 		} catch (SQLException ex) {
 			return false;
 		}
 	}
-	
+
 	public static boolean insertarDesdeFichero() {
+		String[] lineaDividida;
+		String linea;
+
+		try {
+			File insertar = new File(RUTA_INS + FI_IN);
+			Scanner lector = new Scanner(insertar);
+
+			String db_name = lector.nextLine();
+			String tb_name = lector.nextLine();
+			String column_names = lector.nextLine();
+
+			do {
+
+				linea = lector.nextLine();
+				lineaDividida = linea.split(",");
+
+				String nombre = lineaDividida[0];
+				String ciudad = lineaDividida[1];
+				
+				insertCliente(nombre, ciudad);
+
+			} while (lector.hasNext());
+			
+			lector.close();
+			return true;
+		} catch (FileNotFoundException ex) {
+			System.out.println("No se ha encontrado el fichero " + FI_IN);
+			return false;
+		}
+	}
+
+	public static boolean actualizarDesdeFichero() {
 		String[] lineaDividida;
 		String linea;
 		
 		try {
-			ResultSet rs = getTablaClientes(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			File insertar = new File ("Ficheros/Instrucciones/Insertar.txt");
-			Scanner lector = new Scanner(insertar);
+			File actualizar = new File (RUTA_INS + FI_MOD);
+			Scanner lector = new Scanner(actualizar);
+			
+			String db_name = lector.nextLine();
+			String tb_name = lector.nextLine();
+			String column_names = lector.nextLine();
+			
+			do {
+				
+				linea = lector.nextLine();
+				lineaDividida = linea.split(",");
+				
+				int id = Integer.parseInt(lineaDividida[0]);
+				String nuevoNombre = lineaDividida[1];
+				String nuevaCiudad = lineaDividida[2];
+				
+				
+				updateCliente(id, nuevoNombre, nuevaCiudad);				
+				
+			} while (lector.hasNext());
+			
+			lector.close();
+			return true;
+		} catch (FileNotFoundException ex){
+			System.out.println("No se ha encontrado el fichero " + FI_MOD);
+			return false;
+		}
+		
+	}
+	
+	public static boolean eliminarDesdeFichero() {
+		String[] lineaDividida;
+		String linea;
+		
+		try {
+			File eliminar = new File (RUTA_INS + FI_DEL);
+			Scanner lector = new Scanner(eliminar);
 			
 			String db_name = lector.nextLine();
 			String tb_name = lector.nextLine();
 			
-			if (rs.first()) {
+			linea = lector.nextLine();
+			lineaDividida = linea.split(",");
+			
+			for (String id : lineaDividida) {
 				
-				do {
-					
-					linea = lector.nextLine();
-					lineaDividida = linea.split(",");
-					
-					rs.moveToInsertRow();
-					rs.updateString(DB_CLI_NOM, lineaDividida[0]);
-					rs.updateString(DB_CLI_CIU, lineaDividida[1]);
-					rs.insertRow();
-					
-				} while (lector.hasNext());
+				int idInt = Integer.parseInt(id);
+				deleteCliente(idInt);
 			}
+			
 			return true;
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-			return false;
 		} catch (FileNotFoundException ex) {
-			System.out.println("No se ha encontrado el fichero \"Insertar\"");
+			System.out.println("No se ha encontrado el fichero " + FI_DEL);
 			return false;
 		}
 	}
+	
 }

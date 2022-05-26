@@ -1,5 +1,4 @@
 tienda
 clientes
 nombre,ciudad
-Ramiro,Fuengirola
-Antonio,Torrox
+Natalia,Sexmo
