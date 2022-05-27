@@ -1,0 +1,5 @@
+tienda
+clientes
+id,nombre,ciudad
+1,Alvaro,PlayaMar
+2,Pepa,Los Prados

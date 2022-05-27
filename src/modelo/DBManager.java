@@ -1,7 +1,6 @@
 package modelo;
 
 import java.sql.*;
-import com.mysql.cj.jdbc.DatabaseMetaData;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,27 +10,27 @@ import java.io.FileNotFoundException;
 /**
  * DBManager
  * 
- * @Version 1.1.1 26/05/2022
+ * @version 1.1.2 27/05/2022
  * 
  * @author Daniel Ramirez Vaquero
+ *
  */
-
 public class DBManager {
 
-	// Conexión a la base de datos
+	//Conexion a la base de datos
 	private static Connection conn = null;
 
-	// Configuración de la conexión a la base de datos
+	//Configuracion de la conexion a la base de datos
 	private static final String DB_HOST = "localhost";
 	private static final String DB_PORT = "3306";
 	private static final String DB_NAME = "tienda";
 	private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + " ?serverTimezone=UTC";
 	private static final String DB_USER = "root";
 	private static final String DB_PASS = "";
-	private static final String DB_MSQ_CONN_OK = "CONEXIÓN CORRECTA";
-	private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXIÓN";
+	private static final String DB_MSQ_CONN_OK = "CONEXION CORRECTA";
+	private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXION";
 
-	// Configuración de la tabla
+	//ConfiguraciOn de la tabla
 	private static final String DB_CLI = "clientes";
 	private static final String DB_CLI_SELECT = "SELECT * FROM " + DB_CLI;
 	private static final String DB_CLI_ID = "id";
@@ -44,16 +43,19 @@ public class DBManager {
 	private static final String FI_IN = "Insertar.txt";
 	private static final String FI_MOD = "Actualizar.txt";
 	private static final String FI_DEL = "Eliminar.txt";
+	private static final String FI_MSQ_ERR = "No se ha encontrado el fichero ";
 
 	//////////////////////////////////////////////////
-	// MÉTODOS DE CONEXIÓN A LA BASE DE DATOS
+	// METODOS DE CONEXION A LA BASE DE DATOS
 	//////////////////////////////////////////////////
 
 	/**
 	 * Intenta cargar el JDBC driver.
 	 * 
 	 * @return true si pudo cargar el driver, false en caso contrario
-	 * @exception ClassNotFoundException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean loadDriver() {
 		try {
@@ -71,7 +73,9 @@ public class DBManager {
 	 * Intenta conectar con la base de datos.
 	 *
 	 * @return true si pudo conectarse, false en caso contrario
-	 * @exception SQLException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean connect() {
 		try {
@@ -86,13 +90,15 @@ public class DBManager {
 	}
 
 	/**
-	 * Comprueba la conexión y muestra su estado por pantalla
+	 * Comprueba la conexiOn y muestra su estado por pantalla
 	 *
-	 * @return true si la conexión existe y es válida, false en caso contrario
-	 * @exception SQLException
+	 * @return true si la conexion existe y es valida, false en caso contrario
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean isConnected() {
-		// Comprobamos estado de la conexión
+		// Comprobamos estado de la conexion
 		try {
 			if (conn != null && conn.isValid(0)) {
 				System.out.println(DB_MSQ_CONN_OK);
@@ -108,13 +114,14 @@ public class DBManager {
 	}
 
 	/**
-	 * Cierra la conexión con la base de datos
+	 * Cierra la conexion con la base de datos
 	 * 
-	 * @exception SQLException
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static void close() {
 		try {
-			System.out.print("Cerrando la conexión...");
+			System.out.print("Cerrando la conexion...");
 			conn.close();
 			System.out.println("OK!");
 		} catch (SQLException ex) {
@@ -124,7 +131,10 @@ public class DBManager {
 
 	/**
 	 * 
-	 * Método en el que establecemos los parametros de la tabla.
+	 * Metodo en el que establecemos los parametros de la tabla.
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static void parametrosTabla() {
 
@@ -138,27 +148,40 @@ public class DBManager {
 	}
 
 	//////////////////////////////////////////////////
-	// MÉTODOS DE TABLA CLIENTES
+	// METODOS DE TABLA CLIENTES
 	//////////////////////////////////////////////////
 
-	// Devuelve
-	// Los argumentos indican el tipo de ResultSet deseado
 	/**
 	 * Obtiene toda la tabla clientes de la base de datos
 	 * 
+	 * @param resultSetType			Parametros del ResultSet
+	 * @param resultSetConcurrency 	Parametros del ResulSet
 	 * @return ResultSet con la tabla, null en caso de error
-	 * @exception SQLException
+	 * 
+	 * @version 2.0
+	 * @since 1.0.0
 	 */
 	public static ResultSet getTablaClientes(int resultSetType, int resultSetConcurrency) {
 		try {
 			PreparedStatement stmt = conn.prepareStatement(DB_CLI_SELECT, resultSetType, resultSetConcurrency);
 			return stmt.executeQuery();
-		} catch (SQLException ex) {
+		} catch (SQLException | NullPointerException ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
+	/**
+	 * Obtiene la tabla clientes filtrada por la ciudad de la base de datos
+	 * 
+	 * @param ciudad  				Ciudad por la que vamos a filtrar la BBDD
+	 * @param resultSetType			Parametros del ResultSet
+	 * @param resultSetConcurrency 	Parametros del ResulSet
+	 * @return Resulset con la tabla filtrada, null si hay algUn error.
+	 * 
+	 * @version 1.0
+	 * @since 1.1.0
+	 */
 	public static ResultSet getTablaFiltrada(String ciudad, int resultSetType, int resultSetConcurrency) {
 		try {
 			String sql = DB_CLI_SELECT + " WHERE " + DB_CLI_CIU + " ='" + ciudad + "';";
@@ -173,12 +196,14 @@ public class DBManager {
 	/**
 	 * Imprime por pantalla el contenido de la tabla clientes
 	 * 
-	 * @exception SQLException, NullPointerException
+	 * @version 1.1
+	 * @since 1.0.0
 	 */
 	public static void printTablaClientes() {
 		try {
 			ResultSet rs = getTablaClientes(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
+			//Si hay primer registro podemos imprimr la tabla, si no, salimos.
 			if (rs.first()) {
 
 				do {
@@ -197,12 +222,20 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Imprime por pantalla el contenido de la tabla clientes filtrada
+	 * 
+	 * @param ciudad ciudad por la que va a estar filtrada la tabla
+	 * 
+	 * @version 1.0
+	 * @since 1.1.0
+	 */
 	public static void printTablaFiltrada(String ciudad) {
 		try {
 			ResultSet rs = getTablaFiltrada(ciudad, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
 			if (!rs.first()) {
-				System.out.println("No hay ningún cliente de " + ciudad + " registrado en la BBDD.");
+				System.out.println("No hay ningUn cliente de " + ciudad + " registrado en la BBDD.");
 
 			} else {
 
@@ -219,16 +252,28 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Vuelta el contenido de la tabla en un archivo con nombre indicado por el usuario.
+	 * 
+	 * @param nombreArchivo Nombre del archivo dado por el usuario
+	 * @return true si ha podido volcar los datos, false de lo contrario.
+	 * 
+	 * @version 1.0
+	 * @since 1.1.0
+	 */
 	public static boolean volcarTabla(String nombreArchivo) {
 		try {
 			File archivoVolcado = new File(RUTA_VOL + nombreArchivo + ".txt");
 			FileWriter printer = new FileWriter(archivoVolcado);
 
+			//Imprimimos el nombre de la BBDD, de la tabla y de las columnas.
 			printer.write("BBDD - " + DB_NAME + "\t" + "TABLA - " + DB_CLI + "\n");
 			printer.write(DB_CLI_ID + "\t" + DB_CLI_NOM + "\t" + DB_CLI_CIU + "\n");
 
+			//Obtenemos la tabla de clientes
 			ResultSet rs = getTablaClientes(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
+			
+			//Si hay primer registro procedemos, si no devolvemos false
 			if (rs.first()) {
 
 				do {
@@ -237,6 +282,10 @@ public class DBManager {
 					String c = rs.getString(DB_CLI_CIU);
 					printer.write(id + "\t" + n + "\t" + c + "\n");
 				} while (rs.next());
+			} else {
+				rs.close();
+				printer.close();
+				return false;
 			}
 
 			rs.close();
@@ -253,7 +302,7 @@ public class DBManager {
 	}
 
 	//////////////////////////////////////////////////
-	// MÉTODOS DE UN SOLO CLIENTE
+	// METODOS DE UN SOLO CLIENTE
 	//////////////////////////////////////////////////
 
 	/**
@@ -261,7 +310,9 @@ public class DBManager {
 	 * 
 	 * @param id id del cliente
 	 * @return ResultSet con el resultado de la consulta, null en caso de error
-	 * @exception SQLException
+	 * 
+	 * @version 2.0
+	 * @since 1.0.0
 	 */
 	public static ResultSet getCliente(int id) {
 		try {
@@ -291,7 +342,9 @@ public class DBManager {
 	 *
 	 * @param id id del cliente
 	 * @return verdadero si existe, false en caso contrario
-	 * @exception SQLException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean existsCliente(int id) {
 		try {
@@ -323,7 +376,9 @@ public class DBManager {
 	 * Imprime los datos del cliente con id indicado
 	 *
 	 * @param id id del cliente
-	 * @exception SQLException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static void printCliente(int id) {
 		try {
@@ -334,7 +389,7 @@ public class DBManager {
 				return;
 			}
 
-			// Imprimimos su información por pantalla
+			// Imprimimos su informaciOn por pantalla
 			int cliId = rs.getInt(DB_CLI_ID);
 			String nombre = rs.getString(DB_CLI_NOM);
 			String ciudad = rs.getString(DB_CLI_CIU);
@@ -352,9 +407,11 @@ public class DBManager {
 	 * @param nombre nombre del cliente
 	 * @param ciudad ciudad del cliente
 	 * @return verdadero si pudo insertarlo, false en caso contrario
-	 * @exception SQLException, NullPointerException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
-	public static boolean insertCliente(String nombre, String direccion) {
+	public static boolean insertCliente(String nombre, String ciudad) {
 		try {
 			// Obtenemos la tabla clientes
 			System.out.print("Insertando cliente " + nombre + "...");
@@ -363,7 +420,7 @@ public class DBManager {
 			// Insertamos el nuevo registro
 			rs.moveToInsertRow();
 			rs.updateString(DB_CLI_NOM, nombre);
-			rs.updateString(DB_CLI_CIU, direccion);
+			rs.updateString(DB_CLI_CIU, ciudad);
 			rs.insertRow();
 
 			// Todo bien, cerramos ResultSet y devolvemos true
@@ -382,9 +439,11 @@ public class DBManager {
 	 *
 	 * @param id          id del cliente a modificar
 	 * @param nuevoNombre nuevo nombre del cliente
-	 * @param nuevoCiudad nueva ciudad del cliente
-	 * @return verdadero si pudo modificarlo, false en caso contrario
-	 * @exception SQLException
+	 * @param nuevaCiudad nueva ciudad del cliente
+	 * @return true si pudo modificarlo, false en caso contrario
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean updateCliente(int id, String nuevoNombre, String nuevaCiudad) {
 		try {
@@ -407,7 +466,7 @@ public class DBManager {
 				System.out.println("OK!");
 				return true;
 			} else {
-				System.out.println("ERROR. ResultSet vacío.");
+				System.out.println("ERROR. ResultSet vacIo.");
 				return false;
 			}
 		} catch (SQLException ex) {
@@ -421,7 +480,9 @@ public class DBManager {
 	 *
 	 * @param id id del cliente a eliminar
 	 * @return verdadero si pudo eliminarlo, false en caso contrario
-	 * @exception SQLException
+	 * 
+	 * @version 1.0
+	 * @since 1.0.0
 	 */
 	public static boolean deleteCliente(int id) {
 		try {
@@ -443,7 +504,7 @@ public class DBManager {
 				System.out.println("OK!");
 				return true;
 			} else {
-				System.out.println("ERROR. ResultSet vacío.");
+				System.out.println("ERROR. ResultSet vacIo.");
 				return false;
 			}
 
@@ -457,13 +518,24 @@ public class DBManager {
 	// OTROS METODOS
 	//////////////////////////////////////////////////
 
+	/**
+	 * Crea una nueva tabla de 3 columnas id, columna1, columan2
+	 * 
+	 * @param nombreTabla 	Nombre de la tabla dado por el usuario
+	 * @param columna1 		Nombre de la primera columna dada por el usuario
+	 * @param columna2		Nombre de la segunda columan dada por el usuario
+	 * @return true si ha podido crear la tabla, false de lo contrario.
+	 * 
+	 * @version 1.0
+	 * @since 1.1.0
+	 */
 	public static boolean nuevaTabla(String nombreTabla, String columna1, String columna2) {
 		System.out.println("Generando tabla " + nombreTabla + "...");
 		try {
+			//Sentencia SQL
 			String sql = "CREATE TABLE " + nombreTabla + " (id INT PRIMARY KEY NOT NULL, " + columna1
 					+ " TEXT NOT NULL, " + columna2 + " TEXT NOT NULL)";
-			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stmt.executeUpdate();
 			stmt.close();
 			System.out.println("OK!");
@@ -473,96 +545,122 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Lee el fichero y procesa los datos para enviarlos a la funcion insertCliente
+	 * @see modelo.DBManager#insertCliente(String, String)
+	 * @return true si ha podido insertar los datos correctamente, false de lo contrario.
+	 * 
+	 * @version 1.1 
+	 * @since 1.1.0
+	 */
 	public static boolean insertarDesdeFichero() {
 		String[] lineaDividida;
 		String linea;
 
 		try {
+			//Preparamos el archivo y el lector
 			File insertar = new File(RUTA_INS + FI_IN);
 			Scanner lector = new Scanner(insertar);
 
-			String db_name = lector.nextLine();
-			String tb_name = lector.nextLine();
-			String column_names = lector.nextLine();
-
-			do {
-
-				linea = lector.nextLine();
-				lineaDividida = linea.split(",");
-
-				String nombre = lineaDividida[0];
-				String ciudad = lineaDividida[1];
+			String db_name = lector.nextLine();					//En la primera linea tenemos el nombre de la BBDD
+			String tb_name = lector.nextLine();					//En la segunda el nombre de la tabla
+			String column_names = lector.nextLine();			//En la tercera el nombbre de las comlumanas separadas por ","
+													
+			do {												//A patir de la cuarta linea tenemos los datos a insertar bajo el mismo criterio que el nombre de las columnas
+						
+				linea = lector.nextLine();						//Cojo la linea
+				lineaDividida = linea.split(",");				//La divido por la coma
+					
+				String nombre = lineaDividida[0];				//La primera parte serA el nombre del cliente
+				String ciudad = lineaDividida[1];				//La segunda el ciudad del cliente
 				
-				insertCliente(nombre, ciudad);
+				insertCliente(nombre, ciudad);					//Mandamos estos datos a insertar en la BBDD
 
-			} while (lector.hasNext());
+			} while (lector.hasNext());							//Repetimos la operacion hasta no tener mas lineas
 			
 			lector.close();
 			return true;
 		} catch (FileNotFoundException ex) {
-			System.out.println("No se ha encontrado el fichero " + FI_IN);
+			System.out.println(FI_MSQ_ERR + FI_IN);
 			return false;
 		}
 	}
 
+	/**
+	 * Lee el fichero y procesa los datos para enviarlos a la funcion updateCliente
+	 * @see modelo.DBManager#updateCliente(int, String, String)
+	 * 
+	 * @return true se ha podido modificar los datos, false de lo contrario
+	 * 
+	 * @version 1.0
+	 * @since 1.1.1
+	 */
 	public static boolean actualizarDesdeFichero() {
 		String[] lineaDividida;
 		String linea;
 		
 		try {
+			//Preparamos el archivo y el lector
 			File actualizar = new File (RUTA_INS + FI_MOD);
 			Scanner lector = new Scanner(actualizar);
 			
-			String db_name = lector.nextLine();
-			String tb_name = lector.nextLine();
-			String column_names = lector.nextLine();
+			String db_name = lector.nextLine();					//En la primera linea tenemos el nombre de la BBDD
+			String tb_name = lector.nextLine();					//En la segunda el nombre de la tabla
+			String column_names = lector.nextLine();			//En la tercera el nombbre de las comlumanas separadas por ","
 			
-			do {
+			do {												//A patir de la cuarta linea tenemos los datos a modificar bajo el mismo criterio que el nombre de las columnas
 				
-				linea = lector.nextLine();
-				lineaDividida = linea.split(",");
+				linea = lector.nextLine();						//Cojo la linea
+				lineaDividida = linea.split(",");				//La divido por la coma
+					
+				int id = Integer.parseInt(lineaDividida[0]); 	//La primera parte sera el id del cliente
+				String nuevoNombre = lineaDividida[1];			//La segunda parte sera el nuevo nombre del cliente
+				String nuevaCiudad = lineaDividida[2];			//La tercera parte sera la nueva ciudad del cliete
 				
-				int id = Integer.parseInt(lineaDividida[0]);
-				String nuevoNombre = lineaDividida[1];
-				String nuevaCiudad = lineaDividida[2];
+				updateCliente(id, nuevoNombre, nuevaCiudad);	//Mandamos estos datos a modificar en la BBDD
 				
-				
-				updateCliente(id, nuevoNombre, nuevaCiudad);				
-				
-			} while (lector.hasNext());
+			} while (lector.hasNext());							//Repetimos la operacion hasta no tener mas lineas
 			
 			lector.close();
 			return true;
 		} catch (FileNotFoundException ex){
-			System.out.println("No se ha encontrado el fichero " + FI_MOD);
+			System.out.println(FI_MSQ_ERR + FI_MOD);
 			return false;
 		}
 		
 	}
 	
+	/**
+	 * Lee el fichero y procesa los datos para enviarlos a la funcion deleteCliente
+	 * @see modelo.DBManager#deleteCliente(int)
+	 * 
+	 * @return true se ha podido eliminar los datos correctamente, false de lo contrario
+	 * @since 1.1.1
+	 */
 	public static boolean eliminarDesdeFichero() {
 		String[] lineaDividida;
 		String linea;
 		
 		try {
+			//Preparo el archivo y el lector
 			File eliminar = new File (RUTA_INS + FI_DEL);
 			Scanner lector = new Scanner(eliminar);
 			
-			String db_name = lector.nextLine();
-			String tb_name = lector.nextLine();
+			String db_name = lector.nextLine();					//En la primera linea tenemos el nombre de la BBDD
+			String tb_name = lector.nextLine();					//El la segunda linea tenemos el nombre de la tabla
 			
-			linea = lector.nextLine();
-			lineaDividida = linea.split(",");
+			linea = lector.nextLine();							//Cojo la linea
+			lineaDividida = linea.split(",");					//La divido por la coma
 			
-			for (String id : lineaDividida) {
+			for (String id : lineaDividida) {					//Cada elemento de nuestra lineaDividida sera el id del cliente a eliminar
 				
-				int idInt = Integer.parseInt(id);
-				deleteCliente(idInt);
+				int idInt = Integer.parseInt(id);				//Recogemos ese id y el hacemos parseInt
+				deleteCliente(idInt);							//Mandamos a eliminar el cliente con esa id de la BBDD
 			}
 			
 			return true;
 		} catch (FileNotFoundException ex) {
-			System.out.println("No se ha encontrado el fichero " + FI_DEL);
+			System.out.println(FI_MSQ_ERR + FI_DEL);
 			return false;
 		}
 	}
