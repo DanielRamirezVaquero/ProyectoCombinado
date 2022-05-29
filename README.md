@@ -12,7 +12,7 @@ En este repositorio encontramos un proyecto combinado de las asignaturas de EEDD
   - **Programa base**
 - May 14, 2022 
   - **Versión 1.0.1** ***(rama master)***
-    - Modifico carácteres extraños y la columan "dirección" -> "ciudad".
+    - Modifico caracteres extraños y la columna "dirección" -> "ciudad".
    - **Versión 1.0.2** ***(rama master)***
       - Corrección y caracteres extraños (acentos).
       - Cambio nombre de variables. 
@@ -31,10 +31,10 @@ En este repositorio encontramos un proyecto combinado de las asignaturas de EEDD
       - Separado en una rama aparte de la versión gráfica.
       - Mejorada la modificación para usar PreparedStatement.
       - Añadida opción para crear una tabla.
-      - Añadida función para filtrar una linea.
+      - Añadida función para filtrar una línea.
       - Añadida función volcado de tabla en fichero.
       - Añadida función de carga de datos desde fichero.
-      - Correción de errores no significativos.
+      - Corrección de errores no significativos.
     - **Versión 1.1.1** ***(rama VersionNoGrafica)***
       - Mejorada la función insertarDesdeFichero
       - Añadida función para modificar datos desde un fichero.
